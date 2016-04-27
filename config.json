@@ -1,0 +1,13 @@
+{
+
+  "hostname": "localhost",
+  "port": 9000,
+
+
+  "username": "nikkis",
+  "devicename": "raspberry",
+
+  "reportContextData": true,
+  "reportContextDataInterval": 5
+
+}
