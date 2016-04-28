@@ -154,14 +154,18 @@ function reportContextEvents() {
         capabilityName;
 
       for (capabilityName in CAPABILITIES) {
-        if (CAPABILITIES.hasOwnProperty(capabilityName)) {
-          if (CAPABILITIES[capabilityName].getContextData) {
-            var dataToEmit = CAPABILITIES[capabilityName].getContextData(),
-              dataKey;
-            for (dataKey in dataToEmit) {
-              ultimateCxtData[dataKey] = dataToEmit[dataKey];
+        try {
+          if (CAPABILITIES.hasOwnProperty(capabilityName)) {
+            if (CAPABILITIES[capabilityName].getContextData) {
+              var dataToEmit = CAPABILITIES[capabilityName].getContextData(),
+                dataKey;
+              for (dataKey in dataToEmit) {
+                ultimateCxtData[dataKey] = dataToEmit[dataKey];
+              }
             }
           }
+        } catch (err) {
+          log(err);
         }
       }
 
