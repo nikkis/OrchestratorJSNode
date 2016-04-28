@@ -94,7 +94,10 @@ PhillipsHUE = {
   getState: function () {
     var api = new HueApi(hostname, username),
       state;
-    api.fullState().then(displayResult).done();
+    api.fullState()
+      .then(displayResult)
+      .fail(displayError)
+      .done();
   },
 
 
