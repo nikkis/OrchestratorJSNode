@@ -27,11 +27,32 @@ function sleep(ms) {
 
 var CAPABILITIES = {};
 
-var TempCapabilityConstructor = require(ROOT + '/capabilities/TestCapability.js');
-CAPABILITIES.TestCapability = new TempCapabilityConstructor();
 
-var TempCapabilityConstructor = require(ROOT + '/capabilities/TemperatureCapability.js');
-CAPABILITIES.Temperature = new TempCapabilityConstructor();
+function initCapabilities() {
+  log('Initializing capabilities:');
+  var
+    capabilityIndex,
+    capabilityName,
+    TempCapabilityConstructor;
+  for (capabilityIndex in config.enabledCapabilities) {
+    try {
+      capabilityName = config.enabledCapabilities[capabilityIndex];
+      log('..' + capabilityName);
+      TempCapabilityConstructor = require(ROOT + '/capabilities/' + capabilityName + '.js');
+      CAPABILITIES[capabilityName] = new TempCapabilityConstructor();
+
+      if (CAPABILITIES[capabilityName].hasOwnProperty('initCapability')) {
+        CAPABILITIES[capabilityName].initCapability();
+      }
+
+    } catch (err) {
+      log('ERROR initializing capabilities: ' + capabilityIndex + ', ' + capabilityName + ': ' + err);
+    }
+  }
+}
+
+
+
 
 
 var CURRENT_ACTION_ID,
@@ -77,46 +98,40 @@ function handleMethodcall(capabilityName, methodName, methodArguments) {
 
 
 // connect
-var SOCKET = require('socket.io-client').connect(host);
+var SOCKET;
 
-// login
-SOCKET.on('connect', function () {
-  log('connected! now login..');
-  SOCKET.emit('login', [deviceIdentity]);
-});
+function connectOJS() {
+  SOCKET = require('socket.io-client').connect(host);
+
+  // login
+  SOCKET.on('connect', function () {
+    log('connected..');
+    SOCKET.emit('login', [deviceIdentity]);
+  });
 
 
-// begin to listen for capability method calls
-SOCKET.on('methodcall', function (receivedArguments) {
+  // begin to listen for capability method calls
+  SOCKET.on('methodcall', function (receivedArguments) {
 
-  if (receivedArguments.length === 5) {
+    if (receivedArguments.length === 5) {
 
-    CURRENT_ACTION_ID = receivedArguments[0];
-    CURRENT_METHODCALL_ID = receivedArguments[1];
-    var capabilityName = receivedArguments[2],
-      methodcallName = receivedArguments[3],
-      methodcallArguments = receivedArguments[4];
+      CURRENT_ACTION_ID = receivedArguments[0];
+      CURRENT_METHODCALL_ID = receivedArguments[1];
+      var capabilityName = receivedArguments[2],
+        methodcallName = receivedArguments[3],
+        methodcallArguments = receivedArguments[4];
 
-    log('EXECUTING ACTION: ' + CURRENT_ACTION_ID + ' METHOD: ' + CURRENT_METHODCALL_ID);
+      log('EXECUTING ACTION: ' + CURRENT_ACTION_ID + ' METHOD: ' + CURRENT_METHODCALL_ID);
 
-    handleMethodcall(capabilityName, methodcallName, methodcallArguments);
+      handleMethodcall(capabilityName, methodcallName, methodcallArguments);
 
-  }
+    }
 
-});
-
+  });
+}
 
 function sendOJSException(reason) {
-
-  log('sending exception to orchestrator');
-  /*
-  var responseArguments = [];
-  responseArguments.push(CURRENT_ACTION_ID);
-  responseArguments.push(CURRENT_METHODCALL_ID);
-  responseArguments.push(config.username + '@' + config.devicename);
-  responseArguments.push(reason);
-  SOCKET.emit("ojs_exception", responseArguments);
-  */
+  log('sending exception to orchestrator..');
   SOCKET.emit('ojs_context_data', CURRENT_ACTION_ID, CURRENT_METHODCALL_ID, config.username + '@' + config.devicename, reason);
 }
 
@@ -161,6 +176,15 @@ function reportContextEvents() {
 
 
 
+//////// Main
+
+initCapabilities();
+
+connectOJS();
+
+
+
+// Begin to report context events if enabled
 if (config.reportContextData && config.reportContextDataInterval > 0) {
   log('REPORT CONTEXT DATA ENABLED (' + config.reportContextDataInterval + ')');
   reportContextEvents();

@@ -6,6 +6,7 @@
   "dependencies": {
     "fibers": "1.0.1",
     "socket.io-client": "0.9.16",
-    "request": ">= 0.0.1"
+    "request": ">= 0.0.1",
+    "node-hue-api": ">= 0.0.1"
   }
 }
