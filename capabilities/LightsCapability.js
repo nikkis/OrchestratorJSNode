@@ -1,10 +1,20 @@
-var PhillipsHUE;
+var PhillipsHUE,
+  ENABLED;
 
 module.exports = function TestCapability() {
   return {
     initCapability: function () {
 
       console.log('Initializing LightsCapability');
+
+      try {
+        PhillipsHUE.getState();
+        ENABLED = true;
+        console.log('Lights are connected');
+      } catch (err) {
+        ENABLED = false;
+        console.log('Lights not connected');
+      }
 
       return;
     },
@@ -14,7 +24,7 @@ module.exports = function TestCapability() {
       console.log('Turning all lights on');
 
       try {
-        PhillipsHUE.turnAllOn();
+
       } catch (err) {
         console.log(err);
       }
@@ -24,14 +34,7 @@ module.exports = function TestCapability() {
 
     getContextData: function () {
       var cxtData = {};
-
-      try {
-        PhillipsHUE.getState();
-        cxtData.lightsConnected = true;
-      } catch (err) {
-        cxtData.lightsConnected = false;
-      }
-
+      cxtData.lightsConnected = ENABLED;
       return cxtData;
     }
   }
