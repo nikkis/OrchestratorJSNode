@@ -1,7 +1,7 @@
 var PhillipsHUE,
   ENABLED;
 
-module.exports = function TestCapability() {
+module.exports = function LightsCapability() {
   return {
     initCapability: function () {
 
@@ -20,15 +20,29 @@ module.exports = function TestCapability() {
     },
 
     turnAllOn: function () {
-
-      console.log('Turning all lights on');
-
       try {
-
+        PhillipsHUE.turnAllOn();
       } catch (err) {
         console.log(err);
       }
+      return;
+    },
 
+    turnAllOff: function () {
+      try {
+        PhillipsHUE.turnAllOff();
+      } catch (err) {
+        console.log(err);
+      }
+      return;
+    },
+
+    setScene: function (sceneName) {
+      try {
+        PhillipsHUE.setSceneOn(sceneName);
+      } catch (err) {
+        console.log(err);
+      }
       return;
     },
 
@@ -44,7 +58,8 @@ module.exports = function TestCapability() {
 var hue = require("node-hue-api"),
   HueApi = hue.HueApi,
   lightState = hue.lightState;
-var hostname = "192.168.1.68";
+//var hostname = "192.168.1.68";
+var hostname = "192.168.0.14";
 var username = "25fa138c1c7bbacf123c76429e69a67";
 
 
