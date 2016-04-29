@@ -38,6 +38,7 @@ module.exports = function LightsCapability() {
     },
 
     setScene: function (sceneName) {
+
       try {
         PhillipsHUE.setSceneOn(sceneName);
       } catch (err) {

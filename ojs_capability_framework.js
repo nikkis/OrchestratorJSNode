@@ -63,12 +63,7 @@ var CURRENT_ACTION_ID,
 function sendMethodcallResponse(retVal) {
   log('Sending method call response');
 
-  var methodcallresponseArgs = [];
-  methodcallresponseArgs.push(CURRENT_ACTION_ID);
-  methodcallresponseArgs.push(CURRENT_METHODCALL_ID);
-  methodcallresponseArgs.push(retVal);
-
-  SOCKET.emit('methodcallresponse', methodcallresponseArgs);
+  SOCKET.emit('methodcallresponse', CURRENT_ACTION_ID, CURRENT_METHODCALL_ID, retVal, "STRING");
 
 }
 
@@ -77,8 +72,15 @@ function handleMethodcall(capabilityName, methodName, methodArguments) {
   if (CAPABILITIES.hasOwnProperty(capabilityName)) {
     if (CAPABILITIES[capabilityName].hasOwnProperty(methodName)) {
 
-      var method = CAPABILITIES[capabilityName][methodName],
-        retVal = method();
+      var
+        capability,
+        method,
+        retVal;
+
+      capability = CAPABILITIES[capabilityName];
+      method = CAPABILITIES[capabilityName][methodName];
+
+      retVal = method.apply(capability, methodArguments);
 
       sendMethodcallResponse(retVal);
 
@@ -121,7 +123,9 @@ function connectOJS() {
         methodcallName = receivedArguments[3],
         methodcallArguments = receivedArguments[4];
 
+      log(receivedArguments[4]);
       log('EXECUTING ACTION: ' + CURRENT_ACTION_ID + ' METHOD: ' + CURRENT_METHODCALL_ID);
+      log(capabilityName + '::' + methodcallName + '(' + methodcallArguments + ')');
 
       handleMethodcall(capabilityName, methodcallName, methodcallArguments);
 
