@@ -64,8 +64,8 @@ var username = "25fa138c1c7bbacf123c76429e69a67";
 
 
 var displayResult = function (result) {
-  console.log('results');
-  console.log(JSON.stringify(result, null, 2));
+  //console.log('results');
+  //console.log(JSON.stringify(result, null, 2));
 };
 
 // I have no idea where this comes from
