@@ -4,8 +4,8 @@
   "version": "0.0.1",
 
   "dependencies": {
-    "fibers": "1.0.5",
-    "socket.io-client": "0.9.16",
+    "fibers": ">=1.0.1",
+    "socket.io-client": "*",
     "request": ">= 0.0.1",
     "node-hue-api": "1.0.5"
   }

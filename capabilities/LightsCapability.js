@@ -59,8 +59,7 @@ module.exports = function LightsCapability() {
 var hue = require("node-hue-api"),
   HueApi = hue.HueApi,
   lightState = hue.lightState;
-//var hostname = "192.168.1.68";
-var hostname = "192.168.0.14";
+var hostname = "192.168.1.68";
 var username = "25fa138c1c7bbacf123c76429e69a67";
 
 
@@ -77,7 +76,7 @@ PhillipsHUE = {
   registerNewUser: function () {
 
 
-    var newUserName = null; // You can provide your own username value, but it is normally easier to leave it to the Bridge to create it 
+    var newUserName = null; // You can provide your own username value, but it is normally easier to leave it to the Bridge to create it
     userDescription = "device description goes here";
 
     var displayUserResult = function (result) {
@@ -90,15 +89,15 @@ PhillipsHUE = {
 
     hue = new HueApi();
 
-    // -------------------------- 
-    // Using a promise 
+    // --------------------------
+    // Using a promise
     hue.registerUser(hostname, newUserName, userDescription)
       .then(displayUserResult)
       .fail(displayError)
       .done();
 
-    // -------------------------- 
-    // Using a callback (with default description and auto generated username) 
+    // --------------------------
+    // Using a callback (with default description and auto generated username)
     hue.createUser(hostname, null, null, function (err, user) {
       if (err) throw err;
       displayUserResult(user);
